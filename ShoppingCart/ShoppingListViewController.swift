@@ -1,13 +1,9 @@
-//
-//  ShoppingListViewController.swift
-//  ShoppingCart
-//
-//  Created by Jim Campagno on 8/10/16.
-//  Copyright © 2016 Gamesmith, LLC. All rights reserved.
-//
-
 import UIKit
 
+
+protocol EmojiCreation {
+    func create(emojiGroup:(String, String))
+}
 
 // TODO: Create protocol here.
 
@@ -16,7 +12,11 @@ class ShoppingViewController: UIViewController {
     
     @IBOutlet weak var tableView: UITableView!
     
-    var emojis: [(String, String)] = []
+    var emojis: [(String, String)] = [] {
+        didSet {
+            tableView.reloadData()
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,7 +27,17 @@ class ShoppingViewController: UIViewController {
         tableView.allowsSelection = false
     }
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "EmojiSegue" {
+            let dest = segue.destination as! EmojiSelectionViewController
+            dest.emojiDelegate = self
+        }
+    }
+    
+//    (8) - In the ShoppingListViewController.swift file, we need to implement the prepare(for:sender:) method which is inherit to all UIViewController's.
 }
+
+
 
 // MARK: - UITableViewDataSource Methods
 extension ShoppingViewController: UITableViewDataSource {
@@ -46,8 +56,13 @@ extension ShoppingViewController: UITableViewDataSource {
 }
 
 // MARK: - UITableViewDelegate Methods
-extension ShoppingViewController: UITableViewDelegate { }
+extension ShoppingViewController: UITableViewDelegate, EmojiCreation {
+    func create(emojiGroup: (String, String)) {
+        emojis.append(emojiGroup)
+        
+    }
 
+}
 
 
 
